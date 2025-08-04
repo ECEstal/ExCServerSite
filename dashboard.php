@@ -20,8 +20,8 @@ $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>User Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap & Font Awesome loaded in sidebar.php -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
         body { background-color: #f8f9fa; }
         .profile-img { width: 100px; height: 100px; object-fit: cover; }
@@ -37,103 +37,148 @@ $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
             font-size: 0.875rem;
             white-space: pre-wrap;
         }
-        #lastRefreshed { font-size: 0.8rem; color: #ccc; }
+        .emoji svg {
+            height: 1em !important;
+            width: 1em !important;
+            vertical-align: -0.15em;
+        }
+        #lastRefreshed {
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+        /* Layout for left sidebar (profile + character) */
+        .user-side-col {
+            min-width: 320px;
+            max-width: 360px;
+        }
+        .activity-narrow {
+            max-width: 320px;
+            min-width: 220px;
+        }
         @media (max-width: 991px) {
-            .profile-img { width: 70px; height: 70px; }
-            .card { margin-bottom: 1.2rem; }
+            .user-side-col, .activity-narrow { max-width: 100%; min-width: 0; }
         }
     </style>
 </head>
 <body>
 <div class="container-fluid">
-  <div class="row flex-nowrap">
-    <!-- Desktop sidebar (fixed column) -->
-    <div class="d-none d-lg-block col-lg-3 sidebar">
-      <?php include 'sidebar.php'; ?>
-    </div>
-    <!-- Main content area -->
-    <div class="col py-4 px-3">
-        <!-- MOBILE sidebar toggle/offcanvas -->
-        <?php // Sidebar offcanvas/nav is included in sidebar.php ?>
+    <div class="row">
+        <?php include 'sidebar.php'; ?>
 
-        <!-- Live Chat Card -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <strong><i class="fa-solid fa-comments me-2"></i>Live Server Chat</strong>
-                <small id="lastRefreshed">Last Refreshed: --</small>
-            </div>
-            <div class="card-body p-2" id="chatLogBox">Loading chat log...</div>
-            <div id="chatStatus" class="px-3 pb-2 text-muted small">
-                <span class="spinner-border spinner-border-sm text-success me-1"></span> Monitoring chat...
-            </div>
-            <div class="card-footer">
-                <?php if ($hasCharacter): ?>
-                <form id="userNotifyForm" method="post" class="d-flex gap-2">
-                    <input type="hidden" name="send_as" value="user">
-                    <input type="text" class="form-control" name="notification_msg" placeholder="Type your message..." required>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </form>
-                <div id="notifyAlert" class="mt-2"></div>
-                <?php else: ?>
-                <div class="alert alert-warning mb-0">
-                    <i class="fas fa-link me-1"></i> You must <strong>link a character on the server</strong> to use chat.
+        <div class="col-md-9 py-4 px-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <strong>Live Server Chat</strong>
+                    <small id="lastRefreshed">Last Refreshed: --</small>
                 </div>
-                <?php endif; ?>
+                <div class="card-body p-2" id="chatLogBox">Loading chat log...</div>
+                <div id="chatStatus" class="px-3 pb-2 text-muted small">
+                    <span class="spinner-border spinner-border-sm text-success me-1"></span> Monitoring chat...
+                </div>
+                <!-- Send Message Inline -->
+                <div class="card-footer">
+                    <?php if ($hasCharacter): ?>
+                    <form id="userNotifyForm" method="post" class="d-flex gap-2">
+                        <input type="hidden" name="send_as" value="user">
+                        <input type="text" class="form-control" name="notification_msg" placeholder="Type your message..." required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                    <div id="notifyAlert" class="mt-2"></div>
+                    <?php else: ?>
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-link me-1"></i> You must <strong>link a character on the server</strong> to use chat.
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Content: 3 columns below chat -->
+            <div class="row">
+                <!-- LEFT COLUMN: Profile & Character Panel -->
+                <div class="col-lg-4 user-side-col mb-4">
+                    <div class="card mb-4">
+                        <div class="card-body d-flex align-items-center">
+                            <img src="https://cdn.discordapp.com/avatars/<?= htmlspecialchars($user['id']) ?>/<?= htmlspecialchars($user['avatar']) ?>.png" class="rounded-circle profile-img me-4">
+                            <div>
+                                <h4><?= ucfirst(htmlspecialchars($user['username'])) ?></h4>
+                                <p class="mb-0 text-muted">Email: <?= htmlspecialchars($user['email']) ?></p>
+                                <p class="text-muted small">Discord ID: <?= htmlspecialchars($user['id']) ?></p>
+                            </div>
+                        </div>
+                    </div>
+<!--
+                   <?php /*if ($hasCharacter): ?>
+<?php 
+require_once __DIR__ . '/includes/ArkProfileLite.php';
+// Fetch the latest steam_id from the database if not present in session
+$discordId = $user['id'];
+$steamId = $user['steam_id'] ?? null;
+if (!$steamId) {
+    $stmt = $pdo->prepare("SELECT steam_id FROM users WHERE id = ?");
+    $stmt->execute([$discordId]);
+    $steamId = $stmt->fetchColumn();
+}
+$arkprofileDir = 'C:/users/Administrator/desktop/servers/4/serverfiles/shootergame/saved/savedarks/Ragnarok_WP/';
+$profileFile = $arkprofileDir . $steamId . '.arkprofile';
+echo "<!-- STEAM ID: '$steamId' -->";
+echo "<!-- PROFILE FILE: $profileFile -->";
+$arkProfile = ($steamId && file_exists($profileFile)) ? new ArkProfileLite($profileFile) : null;
+?>
+<div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+        Character Panel
+    </div>
+    <div class="card-body">
+        <?php if ($arkProfile && $arkProfile->playerName): ?>
+            <strong>Name:</strong> <?= htmlspecialchars($arkProfile->playerName) ?><br>
+            <strong>Level:</strong> <?= htmlspecialchars($arkProfile->level) ?><br>
+            <strong>Tribe:</strong> <?= htmlspecialchars($arkProfile->tribeName ?: '—') ?><br>
+            <strong>SteamID:</strong> <?= htmlspecialchars($arkProfile->steamId ?: '—') ?><br>
+        <?php else: ?>
+            <span class="text-warning">Profile not found or could not be parsed.</span>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; */?>-->
+
+                </div>
+                <!-- MIDDLE SPACER COLUMN -->
+                <div class="col-lg-4"></div>
+                <!-- RIGHT COLUMN: Activity Log (narrower) -->
+                <div class="col-lg-4 activity-narrow mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <strong>Activity Log</strong>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" onclick="fetchActivityLog()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                        <div id="activityCollapse" class="collapse show">
+                            <div class="card-body p-2">
+                                <ul class="list-group list-group-flush" id="activityList">
+                                    <?php if (empty($activities)): ?>
+                                        <li class="list-group-item text-muted">No recent activity.</li>
+                                    <?php else: ?>
+                                        <?php foreach ($activities as $act): ?>
+                                            <li class="list-group-item">
+                                                <span><?= htmlspecialchars($act['activity']) ?></span><br>
+                                                <small class="text-muted"><?= date("M d, Y H:i", strtotime($act['timestamp'])) ?></small>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END RIGHT COLUMN -->
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Profile & Activity Row (stacks on mobile) -->
-        <div class="row">
-            <!-- Profile -->
-            <div class="col-lg-5 mb-4">
-                <div class="card mb-4">
-                    <div class="card-body d-flex align-items-center">
-                        <img src="https://cdn.discordapp.com/avatars/<?= htmlspecialchars($user['id']) ?>/<?= htmlspecialchars($user['avatar']) ?>.png" class="rounded-circle profile-img me-4">
-                        <div>
-                            <h4><?= ucfirst(htmlspecialchars($user['username'])) ?></h4>
-                            <p class="mb-0 text-muted">Email: <?= htmlspecialchars($user['email']) ?></p>
-                            <p class="text-muted small">Discord ID: <?= htmlspecialchars($user['id']) ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Spacer -->
-            <div class="d-none d-lg-block col-lg-3"></div>
-            <!-- Activity Log -->
-            <div class="col-lg-4 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <strong><i class="fa-solid fa-clock-rotate-left me-1"></i>Activity Log</strong>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="fetchActivityLog()">
-                            <i class="fas fa-sync"></i> Refresh
-                        </button>
-                    </div>
-                    <div id="activityCollapse" class="collapse show">
-                        <div class="card-body p-2">
-                            <ul class="list-group list-group-flush" id="activityList">
-                                <?php if (empty($activities)): ?>
-                                    <li class="list-group-item text-muted">No recent activity.</li>
-                                <?php else: ?>
-                                    <?php foreach ($activities as $act): ?>
-                                        <li class="list-group-item">
-                                            <span><?= htmlspecialchars($act['activity']) ?></span><br>
-                                            <small class="text-muted"><?= date("M d, Y H:i", strtotime($act['timestamp'])) ?></small>
-                                        </li>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> <!-- end .row -->
-    </div><!-- END main col -->
-  </div><!-- END row -->
-</div><!-- END container -->
-
-<!-- JS -->
 <script>
 const chatLogBox = document.getElementById('chatLogBox');
 const lastRefreshedEl = document.getElementById('lastRefreshed');
