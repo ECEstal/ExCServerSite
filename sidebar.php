@@ -1,5 +1,6 @@
 <?php $isAdmin = $_SESSION['is_admin'] ?? false; ?>
 <!-- Font Awesome & Bootstrap CSS -->
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -14,26 +15,26 @@
     top: 0;
     left: 0;
     z-index: 1030;
+
 }
 .sidebar h5 {
     color: #ffc107;
     letter-spacing: 2px;
 }
-.sidebar a {
+.sidebar .nav-link {
     color: #fff;
     display: flex;
     align-items: center;
     gap: 0.7em;
     margin-bottom: 1rem;
-    text-decoration: none;
     font-weight: 500;
     font-size: 1.1em;
     transition: background 0.15s;
     border-radius: 8px;
     padding: 0.5em 0.75em;
 }
-.sidebar a:hover,
-.sidebar a.active {
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
     background: #343a40;
     color: #ffc107;
     text-decoration: none;
@@ -75,6 +76,7 @@
 </div>
 
 <!-- MOBILE OFFCANVAS (shows ONLY on mobile/tablet) -->
+
 <nav class="navbar navbar-dark bg-dark d-lg-none">
   <div class="container-fluid">
     <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Open sidebar">
@@ -82,6 +84,8 @@
     </button>
   </div>
 </nav>
+
+<!-- Offcanvas Sidebar (Mobile) -->
 <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="offcanvasSidebarLabel"><i class="fa-solid fa-gamepad fa-fw me-2"></i>ExC Dashboard</h5>
@@ -106,11 +110,13 @@
       <a class="nav-link d-flex align-items-center gap-2 py-2" href="logout.php">
         <i class="fa-solid fa-right-from-bracket fa-fw"></i> Logout
       </a>
+
     </nav>
     <hr>
     <p class="text-muted small ms-2 mb-0">&copy; <?= date('Y') ?> Existential Crisis</p>
   </div>
 </div>
+
 
 <!-- Bootstrap JS for Offcanvas -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

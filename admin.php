@@ -90,6 +90,7 @@ html, body {
         .user-welcome { font-weight: 500; margin-bottom: 1.5rem; }
         textarea { resize: vertical; }
         .btn-primary:hover { background-color: #004085; border-color: #003766; }
+
         #chatLogBox {
             background: #fff;
             border: 1px solid #dee2e6;
@@ -102,6 +103,7 @@ html, body {
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+
         #lastRefreshed {
             font-style: italic;
             font-size: 0.8rem;
@@ -131,6 +133,7 @@ html, body {
 
 <div id="main-content">
         <!-- Main content: fills remaining space (100% on mobile) -->
+
             <h1 class="mb-4">Admin Panel</h1>
             <p class="user-welcome">Welcome, <?= htmlspecialchars($_SESSION['user']['username']) ?>. You have admin access.</p>
 
@@ -239,7 +242,6 @@ html, body {
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
         </div>
-<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
 <script>
 const chatPing = new Audio('/assets/ping.mp3');
@@ -351,6 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (didAppend) {
                         chatPing.play().catch(err => {
                             // Optional: suppress sound errors
+                            console.warn('Sound blocked or failed:', err);
                         });
 
                         chatStatus.classList.add('text-success', 'fw-bold');
