@@ -10,7 +10,6 @@ configs/
 # Credentials/backups/logs
 *.bak
 *.log
-*.sql
 *.sqlite
 *.db
 
