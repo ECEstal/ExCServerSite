@@ -87,17 +87,30 @@
     <h5 class="offcanvas-title" id="offcanvasSidebarLabel"><i class="fa-solid fa-gamepad fa-fw me-2"></i>ExC Dashboard</h5>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
-  <div class="offcanvas-body px-0">
-    <a href="dashboard.php"><i class="fa-solid fa-house fa-fw"></i> Home</a>
-    <a href="serverstatus.php"><i class="fa-solid fa-server fa-fw"></i> Server Status</a>
-    <?php if ($isAdmin): ?>
-      <a href="admin.php"><i class="fa-solid fa-shield-halved fa-fw"></i> Admin Panel</a>
-    <?php endif; ?>
-    <a href="users.php"><i class="fa-solid fa-users fa-fw"></i> Users</a>
-    <a href="logout.php"><i class="fa-solid fa-right-from-bracket fa-fw"></i> Logout</a>
+  <div class="offcanvas-body px-3 bg-light">
+    <nav class="nav flex-column">
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="dashboard.php">
+        <i class="fa-solid fa-house fa-fw"></i> Home
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="serverstatus.php">
+        <i class="fa-solid fa-server fa-fw"></i> Server Status
+      </a>
+      <?php if ($isAdmin): ?>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="admin.php">
+        <i class="fa-solid fa-shield-halved fa-fw"></i> Admin Panel
+      </a>
+      <?php endif; ?>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="users.php">
+        <i class="fa-solid fa-users fa-fw"></i> Users
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="logout.php">
+        <i class="fa-solid fa-right-from-bracket fa-fw"></i> Logout
+      </a>
+    </nav>
     <hr>
-    <p class="text-muted small ms-2">&copy; <?= date('Y') ?> Existential Crisis</p>
+    <p class="text-muted small ms-2 mb-0">&copy; <?= date('Y') ?> Existential Crisis</p>
   </div>
 </div>
+
 <!-- Bootstrap JS for Offcanvas -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
