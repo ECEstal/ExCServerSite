@@ -1,0 +1,67 @@
+# Sensitive project files
+config.php
+db.php
+.env
+*.ini
+DynamicConfig.ini
+configs/
+*.env
+
+# Credentials/backups/logs
+*.bak
+*.log
+*.sql
+*.sqlite
+*.db
+
+# Composer dependencies (if used)
+vendor/
+
+# Node.js (if any JS tools used)
+node_modules/
+npm-debug.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Uploaded files and cache (adjust as needed)
+uploads/
+assets/uploads/
+*.cache
+*.tmp
+
+# IDE/project files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS/desktop artifacts
+ehthumbs.db
+Icon?
+desktop.ini
+
+# Exclude secrets from git history
+/secrets/
+/private/
+/keys/
+
+# Don’t commit archive files
+*.zip
+*.tar
+*.gz
+
+# Images? (If you want to exclude *all* images, uncomment)
+# *.png
+# *.jpg
+# *.jpeg
+# *.gif
+
+# Caches/session
+sessions/
+cache/
+*.sess
+
+# Remove this line if you want to commit screenshots
+screenshots/

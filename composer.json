@@ -1,0 +1,22 @@
+{
+    "name": "administrator/htdocs",
+    "description": "website",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Estal",
+            "email": "green.morgan87@gmail.com"
+        }
+    ],
+    "require": {
+        "demostanis/ark-save-parser": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/demostanis/ark-save-parser.git"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
