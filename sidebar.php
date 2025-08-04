@@ -1,5 +1,5 @@
 <?php $isAdmin = $_SESSION['is_admin'] ?? false; ?>
-<!-- Font Awesome & Bootstrap CSS (for offcanvas) -->
+<!-- Font Awesome & Bootstrap CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -9,6 +9,11 @@
     min-height: 100vh;
     color: #fff;
     padding: 2rem 1rem;
+    width: 220px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
 }
 .sidebar h5 {
     color: #ffc107;
@@ -42,25 +47,34 @@
 }
 @media (max-width: 991px) {
     .sidebar {
-        min-height: 0;
-        padding: 1.5rem 1rem;
+        display: none;
+    }
+    #main-content {
+        margin-left: 0 !important;
+    }
+}
+@media (min-width: 992px) {
+    #main-content {
+        margin-left: 220px;
     }
 }
 </style>
 
-<!-- Sidebar content for desktop only (no column or grid classes here!) -->
-<h5><i class="fa-solid fa-gamepad fa-fw me-2"></i>ExC Dashboard</h5>
-<a href="dashboard.php"><i class="fa-solid fa-house fa-fw"></i> Home</a>
-<a href="serverstatus.php"><i class="fa-solid fa-server fa-fw"></i> Server Status</a>
-<?php if ($isAdmin): ?>
-  <a href="admin.php"><i class="fa-solid fa-shield-halved fa-fw"></i> Admin Panel</a>
-<?php endif; ?>
-<a href="users.php"><i class="fa-solid fa-users fa-fw"></i> Users</a>
-<a href="logout.php"><i class="fa-solid fa-right-from-bracket fa-fw"></i> Logout</a>
-<hr>
-<p class="text-muted small ms-2">&copy; <?= date('Y') ?> Existential Crisis</p>
+<!-- DESKTOP SIDEBAR (always visible on lg+) -->
+<div class="sidebar d-none d-lg-block">
+  <h5><i class="fa-solid fa-gamepad fa-fw me-2"></i>ExC Dashboard</h5>
+  <a href="dashboard.php"><i class="fa-solid fa-house fa-fw"></i> Home</a>
+  <a href="serverstatus.php"><i class="fa-solid fa-server fa-fw"></i> Server Status</a>
+  <?php if ($isAdmin): ?>
+    <a href="admin.php"><i class="fa-solid fa-shield-halved fa-fw"></i> Admin Panel</a>
+  <?php endif; ?>
+  <a href="users.php"><i class="fa-solid fa-users fa-fw"></i> Users</a>
+  <a href="logout.php"><i class="fa-solid fa-right-from-bracket fa-fw"></i> Logout</a>
+  <hr>
+  <p class="text-muted small ms-2">&copy; <?= date('Y') ?> Existential Crisis</p>
+</div>
 
-<!-- Offcanvas Mobile Sidebar NAVBAR (Put this in every page or as a header include) -->
+<!-- MOBILE OFFCANVAS (shows ONLY on mobile/tablet) -->
 <nav class="navbar navbar-dark bg-dark d-lg-none">
   <div class="container-fluid">
     <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Open sidebar">
