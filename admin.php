@@ -56,6 +56,34 @@ if (file_exists($configPath)) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+#main-content {
+    /* Keep the sidebar offset on desktop */
+    margin-left: 220px;
+    /* Center the content area, set a max-width */
+    max-width: 3200px;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 2.5rem 2rem;
+    min-height: 100vh;
+    background: none;
+}
+
+/* On mobile, remove left margin and allow full width */
+@media (max-width: 991.98px) {
+    #main-content {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: 100%;
+        padding: 1.5rem 0.5rem;
+    }
+}
+
         body { background-color: #f8f9fa; }
         .btn-icon { display: inline-flex; align-items: center; gap: 0.5rem; }
         .card-header { background-color: #ffc107 !important; color: #212529 !important; font-weight: 600; }
@@ -83,15 +111,29 @@ if (file_exists($configPath)) {
             margin-top: 4px;
             user-select: none;
         }
+        /* Ensure main content is shifted right on desktop, not covered by sidebar */
+        @media (min-width: 992px) {
+            #main-content {
+                margin-left: 220px;
+            }
+        }
+        @media (max-width: 991.98px) {
+            #main-content {
+                margin-left: 0 !important;
+            }
+        }
+		#main-content h1 {
+    text-align: center;
+    font-weight: 700;
+}
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row flex-nowrap">
-        <?php include 'sidebar.php'; ?>
+<?php include 'sidebar.php'; ?>
 
-        <!-- Main content: .col fills remaining space (100% on mobile) -->
-        <div class="col py-4 px-4">
+<div id="main-content">
+        <!-- Main content: fills remaining space (100% on mobile) -->
+
             <h1 class="mb-4">Admin Panel</h1>
             <p class="user-welcome">Welcome, <?= htmlspecialchars($_SESSION['user']['username']) ?>. You have admin access.</p>
 
@@ -175,7 +217,7 @@ if (file_exists($configPath)) {
                     <form id="notifyForm" method="post" action="send_notification.php" class="mt-3">
                         <div class="mb-3">
                             <label for="notificationMsg" class="form-label">Notification Message</label>
-                            <input type="text" class="form-control" id="notificationMsg" name="notification_msg" placeholder="Enter your message here..." required />
+                            <input type="text" class="form-control" id="notificationMsg" name="notification_msg" autocomplete="off" placeholder="Enter your message here..." required />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Send As</label><br />
@@ -200,8 +242,6 @@ if (file_exists($configPath)) {
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
         </div>
-    </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
 <script>
 const chatPing = new Audio('/assets/ping.mp3');
@@ -262,6 +302,7 @@ function applyTwemoji(container) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ===== Live Chat Polling =====
     const chatLogBox = document.getElementById('chatLogBox');
     const lastRefreshedEl = document.getElementById('lastRefreshed');
     const chatStatus = document.getElementById('chatStatus');
@@ -311,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (didAppend) {
                         chatPing.play().catch(err => {
+                            // Optional: suppress sound errors
                             console.warn('Sound blocked or failed:', err);
                         });
 
@@ -326,14 +368,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetchChatLongPolling();
             })
             .catch(err => {
-                console.error('Chat poll failed:', err);
                 chatStatus.innerHTML = `<i class="fas fa-exclamation-circle text-danger me-1"></i> Reconnecting...`;
                 setTimeout(fetchChatLongPolling, 3000);
             });
     }
 
     fetchChatLongPolling();
+
+    // ===== AJAX Notification Submission =====
+    const notifyForm = document.getElementById('notifyForm');
+    const notifyAlert = document.getElementById('notifyAlert');
+
+    notifyForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        notifyAlert.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Sending...`;
+
+        const formData = new FormData(this);
+
+        fetch('send_notification.php', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.text())
+        .then(text => {
+            if (text.trim() === 'OK' || text.trim().toLowerCase().includes('success')) {
+                notifyAlert.innerHTML = `<div class="alert alert-success p-2 mb-2">Notification sent!</div>`;
+                notifyForm.reset();
+                setTimeout(() => notifyAlert.innerHTML = '', 1800);
+            } else {
+                notifyAlert.innerHTML = `<div class="alert alert-danger p-2 mb-2">${text}</div>`;
+            }
+        })
+        .catch(err => {
+            notifyAlert.innerHTML = `<div class="alert alert-danger p-2 mb-2">Error: ${err.message}</div>`;
+        });
+    });
 });
 </script>
+
 </body>
 </html>

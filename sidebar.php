@@ -1,36 +1,6 @@
-<?php
-$isAdmin = $_SESSION['is_admin'] ?? false;
+<?php $isAdmin = $_SESSION['is_admin'] ?? false; ?>
+<!-- Font Awesome & Bootstrap CSS -->
 
-// Sidebar nav links config (edit in one place!)
-$navLinks = [
-    [
-        'href' => 'dashboard.php',
-        'icon' => 'fa-house',
-        'label' => 'Home'
-    ],
-    [
-        'href' => 'serverstatus.php',
-        'icon' => 'fa-server',
-        'label' => 'Server Status'
-    ],
-    $isAdmin ? [
-        'href' => 'admin.php',
-        'icon' => 'fa-shield-halved',
-        'label' => 'Admin Panel'
-    ] : null,
-    [
-        'href' => 'users.php',
-        'icon' => 'fa-users',
-        'label' => 'Users'
-    ],
-    [
-        'href' => 'logout.php',
-        'icon' => 'fa-right-from-bracket',
-        'label' => 'Logout'
-    ],
-];
-$navLinks = array_filter($navLinks); // Remove nulls
-?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -40,9 +10,12 @@ $navLinks = array_filter($navLinks); // Remove nulls
     min-height: 100vh;
     color: #fff;
     padding: 2rem 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    width: 220px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+
 }
 .sidebar h5 {
     color: #ffc107;
@@ -75,13 +48,35 @@ $navLinks = array_filter($navLinks); // Remove nulls
 }
 @media (max-width: 991px) {
     .sidebar {
-        min-height: 0;
-        padding: 1.5rem 1rem;
+        display: none;
+    }
+    #main-content {
+        margin-left: 0 !important;
+    }
+}
+@media (min-width: 992px) {
+    #main-content {
+        margin-left: 220px;
     }
 }
 </style>
 
-<!-- Mobile navbar -->
+<!-- DESKTOP SIDEBAR (always visible on lg+) -->
+<div class="sidebar d-none d-lg-block">
+  <h5><i class="fa-solid fa-gamepad fa-fw me-2"></i>ExC Dashboard</h5>
+  <a href="dashboard.php"><i class="fa-solid fa-house fa-fw"></i> Home</a>
+  <a href="serverstatus.php"><i class="fa-solid fa-server fa-fw"></i> Server Status</a>
+  <?php if ($isAdmin): ?>
+    <a href="admin.php"><i class="fa-solid fa-shield-halved fa-fw"></i> Admin Panel</a>
+  <?php endif; ?>
+  <a href="users.php"><i class="fa-solid fa-users fa-fw"></i> Users</a>
+  <a href="logout.php"><i class="fa-solid fa-right-from-bracket fa-fw"></i> Logout</a>
+  <hr>
+  <p class="text-muted small ms-2">&copy; <?= date('Y') ?> Existential Crisis</p>
+</div>
+
+<!-- MOBILE OFFCANVAS (shows ONLY on mobile/tablet) -->
+
 <nav class="navbar navbar-dark bg-dark d-lg-none">
   <div class="container-fluid">
     <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Open sidebar">
@@ -96,36 +91,32 @@ $navLinks = array_filter($navLinks); // Remove nulls
     <h5 class="offcanvas-title" id="offcanvasSidebarLabel"><i class="fa-solid fa-gamepad fa-fw me-2"></i>ExC Dashboard</h5>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
-  <div class="offcanvas-body px-0">
+  <div class="offcanvas-body px-3 bg-light">
     <nav class="nav flex-column">
-      <?php foreach ($navLinks as $nav): ?>
-        <a class="nav-link<?= (basename($_SERVER['PHP_SELF']) == $nav['href']) ? ' active' : '' ?>" href="<?= $nav['href'] ?>">
-          <i class="fa-solid <?= $nav['icon'] ?> fa-fw"></i> <?= htmlspecialchars($nav['label']) ?>
-        </a>
-      <?php endforeach; ?>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="dashboard.php">
+        <i class="fa-solid fa-house fa-fw"></i> Home
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="serverstatus.php">
+        <i class="fa-solid fa-server fa-fw"></i> Server Status
+      </a>
+      <?php if ($isAdmin): ?>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="admin.php">
+        <i class="fa-solid fa-shield-halved fa-fw"></i> Admin Panel
+      </a>
+      <?php endif; ?>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="users.php">
+        <i class="fa-solid fa-users fa-fw"></i> Users
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 py-2" href="logout.php">
+        <i class="fa-solid fa-right-from-bracket fa-fw"></i> Logout
+      </a>
+
     </nav>
     <hr>
     <p class="text-muted small ms-2 mb-0">&copy; <?= date('Y') ?> Existential Crisis</p>
   </div>
 </div>
 
-<!-- Desktop Sidebar -->
-<div class="col-lg-3 d-none d-lg-flex sidebar flex-column justify-content-between">
-  <div>
-    <h5><i class="fa-solid fa-gamepad fa-fw me-2"></i>ExC Dashboard</h5>
-    <nav class="nav flex-column">
-      <?php foreach ($navLinks as $nav): ?>
-        <a class="nav-link<?= (basename($_SERVER['PHP_SELF']) == $nav['href']) ? ' active' : '' ?>" href="<?= $nav['href'] ?>">
-          <i class="fa-solid <?= $nav['icon'] ?> fa-fw"></i> <?= htmlspecialchars($nav['label']) ?>
-        </a>
-      <?php endforeach; ?>
-    </nav>
-  </div>
-  <div>
-    <hr>
-    <p class="text-muted small ms-2 mb-0">&copy; <?= date('Y') ?> Existential Crisis</p>
-  </div>
-</div>
 
 <!-- Bootstrap JS for Offcanvas -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -23,74 +23,107 @@ $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+#main-content {
+    /* Keep the sidebar offset on desktop */
+    margin-left: 220px;
+    /* Center the content area, set a max-width */
+    max-width: 3200px;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 2.5rem 2rem;
+    min-height: 100vh;
+    background: none;
+}
+
+/* On mobile, remove left margin and allow full width */
+@media (max-width: 991.98px) {
+    #main-content {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: 100%;
+        padding: 1.5rem 0.5rem;
+    }
+}
+
         body { background-color: #f8f9fa; }
-        .profile-img { width: 100px; height: 100px; object-fit: cover; }
-        .card { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .btn-icon { display: inline-flex; align-items: center; gap: 0.5rem; }
+        .card-header { background-color: #ffc107 !important; color: #212529 !important; font-weight: 600; }
+        .user-welcome { font-weight: 500; margin-bottom: 1.5rem; }
+        textarea { resize: vertical; }
+        .btn-primary:hover { background-color: #004085; border-color: #003766; }
         #chatLogBox {
-            background: #1e1e1e;
-            color: #dcdcdc;
-            border: 1px solid #444;
+            background: #fff;
+            border: 1px solid #dee2e6;
             padding: 1rem;
             max-height: 300px;
             overflow-y: auto;
             font-family: monospace;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+            margin-bottom: 0;
             white-space: pre-wrap;
-        }
-        .emoji svg {
-            height: 1em !important;
-            width: 1em !important;
-            vertical-align: -0.15em;
+            word-wrap: break-word;
         }
         #lastRefreshed {
+            font-style: italic;
             font-size: 0.8rem;
-            color: #ccc;
+            color: #555;
+            margin-top: 4px;
+            user-select: none;
         }
-        /* Layout for left sidebar (profile + character) */
-        .user-side-col {
-            min-width: 320px;
-            max-width: 360px;
+        /* Ensure main content is shifted right on desktop, not covered by sidebar */
+        @media (min-width: 992px) {
+            #main-content {
+                margin-left: 220px;
+            }
         }
-        .activity-narrow {
-            max-width: 320px;
-            min-width: 220px;
+        @media (max-width: 991.98px) {
+            #main-content {
+                margin-left: 0 !important;
+            }
+
         }
-        @media (max-width: 991px) {
-            .user-side-col, .activity-narrow { max-width: 100%; min-width: 0; }
-        }
+		#main-content h1 {
+    text-align: center;
+    font-weight: 700;
+}
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <?php include 'sidebar.php'; ?>
+<?php include 'sidebar.php'; ?>
 
-        <div class="col-md-9 py-4 px-4">
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <strong>Live Server Chat</strong>
-                    <small id="lastRefreshed">Last Refreshed: --</small>
-                </div>
-                <div class="card-body p-2" id="chatLogBox">Loading chat log...</div>
-                <div id="chatStatus" class="px-3 pb-2 text-muted small">
-                    <span class="spinner-border spinner-border-sm text-success me-1"></span> Monitoring chat...
-                </div>
-                <!-- Send Message Inline -->
-                <div class="card-footer">
-                    <?php if ($hasCharacter): ?>
-                    <form id="userNotifyForm" method="post" class="d-flex gap-2">
-                        <input type="hidden" name="send_as" value="user">
-                        <input type="text" class="form-control" name="notification_msg" placeholder="Type your message..." required>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
-                    <div id="notifyAlert" class="mt-2"></div>
-                    <?php else: ?>
-                    <div class="alert alert-warning mb-0">
-                        <i class="fas fa-link me-1"></i> You must <strong>link a character on the server</strong> to use chat.
-                    </div>
-                    <?php endif; ?>
+<div id="main-content">
+    <!-- Main content area -->
+
+        <!-- Live Chat Card -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <strong><i class="fa-solid fa-comments me-2"></i>Live Server Chat</strong>
+                <small id="lastRefreshed">Last Refreshed: --</small>
+            </div>
+            <div class="card-body p-2" id="chatLogBox">Loading chat log...</div>
+            <div id="chatStatus" class="px-3 pb-2 text-muted small">
+                <span class="spinner-border spinner-border-sm text-success me-1"></span> Monitoring chat...
+            </div>
+            <div class="card-footer">
+                <?php if ($hasCharacter): ?>
+                <form id="userNotifyForm" method="post" class="d-flex gap-2">
+                    <input type="hidden" name="send_as" value="user">
+                    <input type="text" class="form-control" autocomplete="off" name="notification_msg" placeholder="Type your message..." required>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+                <div id="notifyAlert" class="mt-2"></div>
+                <?php else: ?>
+                <div class="alert alert-warning mb-0">
+                    <i class="fas fa-link me-1"></i> You must <strong>link a character on the server</strong> to use chat.
+
                 </div>
             </div>
 
@@ -175,18 +208,22 @@ $arkProfile = ($steamId && file_exists($profileFile)) ? new ArkProfileLite($prof
                 </div>
                 <!-- END RIGHT COLUMN -->
             </div>
-        </div>
-    </div>
-</div>
+        </div> <!-- end .row -->
+    </div><!-- END main col -->
+
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
 
 <script>
 const chatLogBox = document.getElementById('chatLogBox');
 const lastRefreshedEl = document.getElementById('lastRefreshed');
 const chatStatus = document.getElementById('chatStatus');
 const chatPing = new Audio('/assets/ping.mp3');
-chatPing.volume = 0;
+chatPing.volume = 1;
 let lastTimestamp = 0;
 
+// Emoji conversion
 function convertEmoticonsToEmoji(text) {
     const replacements = {
         ":)": "😊", ":(": "☹️", ":D": "😄", ":P": "😜", ";)": "😉",
@@ -197,18 +234,13 @@ function convertEmoticonsToEmoji(text) {
     const pattern = new RegExp(Object.keys(replacements).map(k => k.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join("|"), "g");
     return text.replace(pattern, match => replacements[match] || match);
 }
-
 function applyTwemoji(container) {
-    if (window.twemoji) {
-        twemoji.parse(container, { folder: 'svg', ext: '.svg' });
-    }
+    if (window.twemoji) twemoji.parse(container, { folder: 'svg', ext: '.svg' });
 }
-
 function updateLastRefreshed() {
     const now = new Date();
     lastRefreshedEl.textContent = `Last Refreshed: ${now.toLocaleTimeString()}`;
 }
-
 function appendMessages(messages) {
     if (messages.length === 0) return false;
     for (const msg of messages) {
@@ -226,17 +258,14 @@ function appendMessages(messages) {
     updateLastRefreshed();
     return true;
 }
-
 function fetchChatLongPolling() {
     chatStatus.innerHTML = `<span class="spinner-border spinner-border-sm text-success me-1" role="status"></span> Monitoring chat...`;
-
     fetch(`fetch_chat.php?since=${lastTimestamp}`)
         .then(res => res.json())
         .then(data => {
             if (Array.isArray(data) && data.length > 0) {
                 const didAppend = appendMessages(data);
                 lastTimestamp = data[data.length - 1].timestamp;
-
                 if (didAppend) {
                     chatPing.play().catch(() => {});
                     chatStatus.classList.add('text-success', 'fw-bold');
@@ -254,7 +283,6 @@ function fetchChatLongPolling() {
             setTimeout(fetchChatLongPolling, 3000);
         });
 }
-
 function fetchActivityLog() {
     fetch('fetch_activity.php')
         .then(res => res.json())
@@ -278,7 +306,7 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, m => map[m]);
 }
 
-// Only reload if verification status just changed
+// Verification polling
 let wasVerified = <?= json_encode($hasCharacter) ?>;
 function pollVerificationStatus() {
     fetch('check_verification_status.php')
@@ -302,12 +330,11 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchActivityLog();
 
     const notifyForm = document.getElementById('userNotifyForm');
-    if (notifyForm) {
+    const alertBox = document.getElementById('notifyAlert');
+    if (notifyForm && alertBox) {
         notifyForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(notifyForm);
-            const alertBox = document.getElementById('notifyAlert');
-
             fetch('send_notification.php', {
                 method: 'POST',
                 body: formData
@@ -315,18 +342,22 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    alertBox.innerHTML = '<div class="alert alert-success">Message sent!</div>';
+                    alertBox.innerHTML = '<div class="alert alert-success mb-2">Message sent!</div>';
                     notifyForm.reset();
+                    setTimeout(() => { alertBox.innerHTML = ''; }, 2000);
                 } else {
-                    alertBox.innerHTML = `<div class="alert alert-danger">${data.message || 'Failed to send message.'}</div>`;
+                    alertBox.innerHTML = `<div class="alert alert-danger mb-2">${data.message || 'Failed to send message.'}</div>`;
+                    setTimeout(() => { alertBox.innerHTML = ''; }, 4000);
                 }
             })
             .catch(() => {
-                alertBox.innerHTML = '<div class="alert alert-danger">An error occurred while sending.</div>';
+                alertBox.innerHTML = '<div class="alert alert-danger mb-2">An error occurred while sending.</div>';
+                setTimeout(() => { alertBox.innerHTML = ''; }, 4000);
             });
         });
     }
 });
 </script>
+
 </body>
 </html>

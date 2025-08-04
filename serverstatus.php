@@ -133,13 +133,80 @@ $externalIP = '69.10.215.85';
         @media (max-width: 767px) {
             .server-card { margin-bottom: 1.2rem; }
         }
+		html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+#main-content {
+    /* Keep the sidebar offset on desktop */
+    margin-left: 220px;
+    /* Center the content area, set a max-width */
+    max-width: 3200px;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 2.5rem 2rem;
+    min-height: 100vh;
+    background: none;
+}
+
+/* On mobile, remove left margin and allow full width */
+@media (max-width: 991.98px) {
+    #main-content {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: 100%;
+        padding: 1.5rem 0.5rem;
+    }
+}
+
+        body { background-color: #f8f9fa; }
+        .btn-icon { display: inline-flex; align-items: center; gap: 0.5rem; }
+        .card-header { background-color: #ffc107 !important; color: #212529 !important; font-weight: 600; }
+        .user-welcome { font-weight: 500; margin-bottom: 1.5rem; }
+        textarea { resize: vertical; }
+        .btn-primary:hover { background-color: #004085; border-color: #003766; }
+        #chatLogBox {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        #lastRefreshed {
+            font-style: italic;
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 4px;
+            user-select: none;
+        }
+        /* Ensure main content is shifted right on desktop, not covered by sidebar */
+        @media (min-width: 992px) {
+            #main-content {
+                margin-left: 220px;
+            }
+        }
+        @media (max-width: 991.98px) {
+            #main-content {
+                margin-left: 0 !important;
+            }
+        }
+		#main-content h1 {
+    text-align: center;
+    font-weight: 700;
+}
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
         <?php include 'sidebar.php'; ?>
-        <main class="col-lg-9 col-md-8 col-12 ms-auto py-4 px-3">
+
+<div id="main-content">
             <h1 class="mb-4"><i class="fa-solid fa-server me-2"></i>ARK Server Status</h1>
             <div class="row g-4">
                 <?php foreach ($servers as $server): 
@@ -188,8 +255,6 @@ $externalIP = '69.10.215.85';
                 </div>
                 <?php endforeach; ?>
             </div>
-        </main>
-    </div>
 </div>
 </body>
 </html>
